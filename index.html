@@ -84,7 +84,7 @@
       const [yyyy, mm, dd] = rawDate.split("-");
       const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
 
-      const apiKey = "4USXQ409XJV9NXK9"; // replace with your actual key
+      const apiKey = process.env.API_KEY; // Use the secret from the environment variable
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
@@ -99,8 +99,8 @@
         if (parseInt(data)) {
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
-          window.open('', '_self', ''); 
-          window.close();
+            window.open('', '_self', ''); 
+            window.close();
           }, 1500); // Close the page after 1.5 seconds
         } else {
           document.getElementById("status").textContent = "⚠️ Failed to update board.";
