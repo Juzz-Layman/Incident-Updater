@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Update Incident Board Date</title>
+  <title>Update Incident Date</title>
   <style>
     :root {
       --text-size: 58px; /* Adjust this value to change text size */
@@ -41,11 +41,11 @@
 </head>
 <body>
   <form id="dateForm">
-    <h2>Update Date to ThingSpeak</h2>
+    <h2><u>Incident Board Update</u></h2>
     <label for="dateInput">Select Date:</label>
     <input type="date" id="dateInput" required>
     <br><br>
-    <input type="submit" value="Send to ThingSpeak">
+    <input type="submit" value="Update Board">
     <p id="status"></p>
   </form>
 
@@ -66,11 +66,12 @@
       if (!rawDate) return;
 
       const [yyyy, mm, dd] = rawDate.split("-");
-     dd}/${mm}/${yyyy.slice(2)}`;
+      const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
 
       const apiKey = "4USXQ409XJV9NXK9"; // replace with your actual key
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
+
 
       try {
         const response = await fetch(url);
@@ -79,9 +80,9 @@
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
             window.close();
-          }, 2000); // Close the page after 5 seconds
+          }, 1500); // Close the page after 1.5 seconds
         } else {
-          document.getElementById("status").textContent = "⚠️ Failed to update ThingSpeak.";
+          document.getElementById("status").textContent = "⚠️ Failed to update board.";
         }
       } catch (error) {
         document.getElementById("status").textContent = "❌ Error sending request.";
@@ -90,4 +91,3 @@
   </script>
 </body>
 </html>
-
