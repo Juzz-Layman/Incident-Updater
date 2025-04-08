@@ -58,7 +58,7 @@
   <form id="dateForm">
     <h2><u>Incident Board Update</u></h2>
     <label for="dateInput">Select Date:</label>
-    <input type="date" id="dateInput" required>
+    <input type="date" id="dateInput" required aria-label="Select Date">
     <br><br>
     <input type="submit" value="Update Board">
     <div class="spinner" id="spinner"></div>
@@ -89,22 +89,25 @@
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
       document.getElementById("spinner").style.display = "block"; // Show spinner
+      document.querySelector('input[type="submit"]').disabled = true; // Disable submit button
 
       try {
         const response = await fetch(url);
         const data = await response.text();
         document.getElementById("spinner").style.display = "none"; // Hide spinner
+        document.querySelector('input[type="submit"]').disabled = false; // Enable submit button
         if (parseInt(data)) {
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
-          window.open('', '_self', ''); 
-          window.close();
+            window.open('', '_self', ''); 
+            window.close();
           }, 1500); // Close the page after 1.5 seconds
         } else {
           document.getElementById("status").textContent = "⚠️ Failed to update board.";
         }
       } catch (error) {
         document.getElementById("spinner").style.display = "none"; // Hide spinner
+        document.querySelector('input[type="submit"]').disabled = false; // Enable submit button
         document.getElementById("status").textContent = "❌ Error sending request.";
       }
     });
