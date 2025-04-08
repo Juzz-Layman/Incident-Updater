@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update ThingSpeak Date</title>
+</head>
+<body>
+  <h2>Update Date to ThingSpeak</h2>
+  <form id="dateForm">
+    <label for="dateInput">Select Date:</label>
+    <input type="date" id="dateInput" required>
+    <br><br>
+    <input type="submit" value="Send to ThingSpeak">
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    // Set today's date as max for the date input
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const maxDate = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("dateInput").setAttribute("max", maxDate);
+
+    // Form submission logic
+    document.getElementById("dateForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const rawDate = document.getElementById("dateInput").value;
+      if (!rawDate) return;
+
+      const [yyyy, mm, dd] = rawDate.split("-");
+      const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
+
+      const apiKey = "4USXQ409XJV9NXK9"; // replace with your actual key
+      const field = "3"; // change if you're using a different field
+      const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
+
+      fetch(url)
+        .then(res => res.text())
+        .then(data => {
+          if (parseInt(data)) {
+            document.getElementById("status").textContent = "✅ Date sent successfully!";
+            setTimeout(() => {
+              window.close();
+            }, 2500); // Close the page after 2.5 seconds
+          } else {
+            document.getElementById("status").textContent = "⚠️ Failed to update ThingSpeak.";
+          }
+        })
+        .catch(err => {
+          document.getElementById("status").textContent = "❌ Error sending request.";
+        });
+    });
+  </script>
+</body>
+</html>
