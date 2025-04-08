@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Update ThingSpeak Date</title>
+  <title>Update Incident Board Date</title>
   <style>
     :root {
-      --text-size: 24px; /* Adjust this value to change text size */
+      --text-size: 58px; /* Adjust this value to change text size */
     }
 
     body {
@@ -28,6 +28,11 @@
     }
     label, input[type="submit"], #status {
       font-size: var(--text-size);
+    }
+    input[type="date"] {
+      font-size: var(--text-size);
+      width: calc(var(--text-size) * 5);
+      height: calc(var(--text-size) * 1.5);
     }
     #status {
       margin-top: 10px;
@@ -61,7 +66,7 @@
       if (!rawDate) return;
 
       const [yyyy, mm, dd] = rawDate.split("-");
-      const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
+     dd}/${mm}/${yyyy.slice(2)}`;
 
       const apiKey = "4USXQ409XJV9NXK9"; // replace with your actual key
       const field = "3"; // change if you're using a different field
@@ -74,7 +79,7 @@
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
             window.close();
-          }, 2000); // Close the page after 2 seconds
+          }, 2000); // Close the page after 5 seconds
         } else {
           document.getElementById("status").textContent = "⚠️ Failed to update ThingSpeak.";
         }
