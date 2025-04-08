@@ -31,11 +31,25 @@
     }
     input[type="date"] {
       font-size: var(--text-size);
-      width: calc(var(--text-size) * 5);
+      width: calc(var(--text-size) * 6.8); /* Adjusted width */
       height: calc(var(--text-size) * 1.5);
     }
     #status {
       margin-top: 10px;
+    }
+    .spinner {
+      display: none;
+      margin: 10px auto;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -46,6 +60,7 @@
     <input type="date" id="dateInput" required>
     <br><br>
     <input type="submit" value="Update Board">
+    <div class="spinner" id="spinner"></div>
     <p id="status"></p>
   </form>
 
@@ -72,10 +87,12 @@
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
+      document.getElementById("spinner").style.display = "block"; // Show spinner
 
       try {
         const response = await fetch(url);
         const data = await response.text();
+        document.getElementById("spinner").style.display = "none"; // Hide spinner
         if (parseInt(data)) {
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
@@ -85,6 +102,7 @@
           document.getElementById("status").textContent = "⚠️ Failed to update board.";
         }
       } catch (error) {
+        document.getElementById("spinner").style.display = "none"; // Hide spinner
         document.getElementById("status").textContent = "❌ Error sending request.";
       }
     });
