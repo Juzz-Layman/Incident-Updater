@@ -2,17 +2,47 @@
 <html>
 <head>
   <title>Update ThingSpeak Date</title>
+  <style>
+    :root {
+      --text-size: 24px; /* Adjust this value to change text size */
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    h2 {
+      text-align: center;
+      font-size: var(--text-size);
+    }
+    #dateForm {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    label, input[type="submit"], #status {
+      font-size: var(--text-size);
+    }
+    #status {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Update Date to ThingSpeak</h2>
   <form id="dateForm">
+    <h2>Update Date to ThingSpeak</h2>
     <label for="dateInput">Select Date:</label>
     <input type="date" id="dateInput" required>
     <br><br>
     <input type="submit" value="Send to ThingSpeak">
+    <p id="status"></p>
   </form>
-
-  <p id="status"></p>
 
   <script>
     // Set today's date as max for the date input
@@ -24,7 +54,7 @@
     document.getElementById("dateInput").setAttribute("max", maxDate);
 
     // Form submission logic
-    document.getElementById("dateForm").addEventListener("submit", function(event) {
+    document.getElementById("dateForm").addEventListener("submit", async function(event) {
       event.preventDefault();
 
       const rawDate = document.getElementById("dateInput").value;
@@ -37,22 +67,22 @@
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
-      fetch(url)
-        .then(res => res.text())
-        .then(data => {
-          if (parseInt(data)) {
-            document.getElementById("status").textContent = "✅ Date sent successfully!";
-            setTimeout(() => {
-              window.close();
-            }, 2500); // Close the page after 2.5 seconds
-          } else {
-            document.getElementById("status").textContent = "⚠️ Failed to update ThingSpeak.";
-          }
-        })
-        .catch(err => {
-          document.getElementById("status").textContent = "❌ Error sending request.";
-        });
+      try {
+        const response = await fetch(url);
+        const data = await response.text();
+        if (parseInt(data)) {
+          document.getElementById("status").textContent = "✅ Date sent successfully!";
+          setTimeout(() => {
+            window.close();
+          }, 2000); // Close the page after 2 seconds
+        } else {
+          document.getElementById("status").textContent = "⚠️ Failed to update ThingSpeak.";
+        }
+      } catch (error) {
+        document.getElementById("status").textContent = "❌ Error sending request.";
+      }
     });
   </script>
 </body>
 </html>
+
