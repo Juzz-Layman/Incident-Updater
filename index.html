@@ -99,8 +99,8 @@
         if (parseInt(data)) {
           document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
-            window.open('', '_self', ''); 
-            window.close();
+          window.open('', '_self', ''); 
+          window.close();
           }, 1500); // Close the page after 1.5 seconds
         } else {
           document.getElementById("status").textContent = "⚠️ Failed to update board.";
