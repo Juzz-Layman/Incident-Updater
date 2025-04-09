@@ -17,8 +17,17 @@ jobs:
         env:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
+          # Ensure the index.html file exists
+          if [ ! -f index.html ]; then
+            echo "index.html file not found!"
+            exit 1
+          fi
+
           # Replace the placeholder in your HTML file with the actual API key
           sed -i 's/REPLACE_WITH_API_KEY/${API_KEY}/' index.html
-          # Deploy to GitHub Pages
+
+          # Install gh-pages
           npm install -g gh-pages
+
+          # Deploy to GitHub Pages
           gh-pages -d .
