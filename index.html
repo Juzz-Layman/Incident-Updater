@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+o<!DOCTYPE html>
 <html>
 <head>
   <title>Update Incident Date</title>
@@ -84,7 +84,7 @@
       const [yyyy, mm, dd] = rawDate.split("-");
       const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
 
-      var apiKey = process.env.API_KEY; // Use the secret from the environment variable
+      const apiKey = "4USXQ409XJV9NXK9" //process.env.API_KEY; // Use the secret from the environment variable
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
       console.log(apiKey);
