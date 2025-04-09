@@ -18,7 +18,7 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
           # Replace the placeholder in your HTML file with the actual API key
-          sed -i 's/REPLACE_WITH_API_KEY/${API_KEY}/' public/index.html
+          sed -i 's/REPLACE_WITH_API_KEY/${API_KEY}/' index.html
           # Deploy to GitHub Pages
           npm install -g gh-pages
-          gh-pages -d public
+          gh-pages -d .
