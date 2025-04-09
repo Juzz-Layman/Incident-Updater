@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Inject API Key and Build
+      - name: Inject API Key
         env:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
@@ -26,8 +26,8 @@ jobs:
           # Replace the placeholder in your HTML file with the actual API key
           sed -i 's/REPLACE_WITH_API_KEY/${API_KEY}/' index.html
 
-          # Install gh-pages
-          npm install -g gh-pages
-
-          # Deploy to GitHub Pages
-          gh-pages -d .
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
