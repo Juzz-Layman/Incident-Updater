@@ -84,7 +84,7 @@
       const [yyyy, mm, dd] = rawDate.split("-");
       const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
 
-      const apiKey = ${{secrets.API_KEY}}; // Placeholder for the API key
+      const apiKey = "4USXQ409XJV9NXK9";
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
