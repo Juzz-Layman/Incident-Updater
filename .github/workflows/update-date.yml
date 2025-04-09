@@ -15,4 +15,3 @@ jobs:
         API_KEY: ${{ secrets.API_KEY }}
       run: |
         echo "API Key is $API_KEY"
-        # Your script to update the incident date goes here
