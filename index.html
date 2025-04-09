@@ -87,6 +87,8 @@
       var apiKey = process.env.API_KEY; // Use the secret from the environment variable
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
+      console.log(apiKey);
+      console.log(url);
 
       document.getElementById("spinner").style.display = "block"; // Show spinner
       document.querySelector('input[type="submit"]').disabled = true; // Disable submit button
