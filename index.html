@@ -1,57 +1,9 @@
-o<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Update Incident Date</title>
   <style>
-    :root {
-      --text-size: 58px; /* Adjust this value to change text size */
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    h2 {
-      text-align: center;
-      font-size: var(--text-size);
-    }
-    #dateForm {
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-    label, input[type="submit"], #status {
-      font-size: var(--text-size);
-    }
-    input[type="date"] {
-      font-size: var(--text-size);
-      width: calc(var(--text-size) * 6.8); /* Increased width */
-      height: calc(var(--text-size) * 1.5);
-      box-sizing: border-box; /* Ensure padding and border are included in the width */
-    }
-    #status {
-      margin-top: 10px;
-    }
-    .spinner {
-      display: none;
-      margin: 10px auto;
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-radius: 50%;
-      border-top: 4px solid #3498db;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    /* Your existing styles */
   </style>
 </head>
 <body>
@@ -83,12 +35,9 @@ o<!DOCTYPE html>
 
       const [yyyy, mm, dd] = rawDate.split("-");
       const formattedDate = `${dd}/${mm}/${yyyy.slice(2)}`;
-
-      const apiKey = "REPLACE_WITH_API_KEY"; // Placeholder for the API key "4USXQ409XJV9NXK9" //process.env.API_KEY; // Use the secret from the environment variable
+      const apiKey = "REPLACE_WITH_API_KEY"; // Placeholder for the API key
       const field = "3"; // change if you're using a different field
       const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
-      console.log(apiKey);
-      console.log(url);
 
       document.getElementById("spinner").style.display = "block"; // Show spinner
       document.querySelector('input[type="submit"]').disabled = true; // Disable submit button
