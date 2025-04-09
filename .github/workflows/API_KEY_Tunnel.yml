@@ -12,6 +12,6 @@ jobs:
 
     - name: Run script
       env:
-        API_KEY: ${{ secrets.API }}
+        API_KEY: ${{secrets.API_KEY}}
       run: |
         echo "API Key is $API_KEY"
