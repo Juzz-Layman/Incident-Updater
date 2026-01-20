@@ -1,247 +1,114 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
   <title>Update Incident Date</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Optional, but helpful security hardening for a public token -->
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 connect-src https://api.github.com;
-                 img-src 'self' data:;
-                 style-src 'self' 'unsafe-inline';
-                 script-src 'self' 'unsafe-inline';
-                 frame-ancestors 'none'">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta name="referrer" content="no-referrer">
-
   <style>
     :root {
-      --text-size: 58px; /* Adjust this to change text size */
-      --accent: #3498db;
-      --bg: #f9f9f9;
-      --ok: #1e7e34;
-      --warn: #b27f00;
-      --err: #c0392b;
+      --text-size: 58px; /* Adjust this value to change text size */
     }
-
-    * { box-sizing: border-box; }
 
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #fff;
+      font-family: Arial, sans-serif;
     }
-
     h2 {
       text-align: center;
       font-size: var(--text-size);
-      margin: 0 0 10px 0;
     }
-
     #dateForm {
-      background-color: var(--bg);
+      background-color: #f9f9f9;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
-      width: min(92vw, 920px);
     }
-
     label, input[type="submit"], #status {
-      font-size: calc(var(--text-size) * 0.9);
+      font-size: var(--text-size);
     }
-
     input[type="date"] {
       font-size: var(--text-size);
-      width: calc(var(--text-size) * 6.8);
+      width: calc(var(--text-size) * 6.8); /* Increased width */
       height: calc(var(--text-size) * 1.5);
-      padding: 6px 12px;
+      box-sizing: border-box; /* Ensure padding and border are included in the width */
     }
-
-    input[type="submit"] {
-      margin-top: 16px;
-      padding: 8px 16px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    input[type="submit"][disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
     #status {
-      margin-top: 12px;
-      min-height: 1.2em;
+      margin-top: 10px;
     }
-
-    #status.ok { color: var(--ok); }
-    #status.warn { color: var(--warn); }
-    #status.err { color: var(--err); }
-
     .spinner {
       display: none;
-      margin: 16px auto 0;
-      border: 6px solid rgba(0, 0, 0, 0.08);
+      margin: 10px auto;
+      border: 4px solid rgba(0, 0, 0, 0.1);
       border-radius: 50%;
-      border-top: 6px solid var(--accent);
-      width: 48px;
-      height: 48px;
-      animation: spin 0.9s linear infinite;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    .note {
-      font-size: calc(var(--text-size) * 0.4);
-      color: #555;
-      margin-top: 8px;
-    }
   </style>
 </head>
 <body>
-  <form id="dateForm" aria-labelledby="title">
-    <h2 id="title"><u>Incident Board Update</u></h2>
-
-    <label for="dateInput">Select Date:</label><br />
-    <input type="date" id="dateInput" required aria-label="Select Date" />
-    <br /><br />
-
-    <input type="submit" value="Update Board" aria-label="Trigger board update" />
-
-    <div class="spinner" id="spinner" role="status" aria-live="polite" aria-label="Processing"></div>
-    <p id="status" aria-live="polite"></p>
-    <p class="note">This will trigger a secure GitHub Action to update the board.</p>
+  <form id="dateForm">
+    <h2><u>Incident Board Update</u></h2>
+    <label for="dateInput">Select Date:</label>
+    <input type="date" id="dateInput" required aria-label="Select Date">
+    <br><br>
+    <input type="submit" value="Update Board">
+    <div class="spinner" id="spinner"></div>
+    <p id="status"></p>
   </form>
 
   <script>
-    // ========= CONFIGURE THESE 4 VALUES =========
-    // IMPORTANT: Use a fine-grained PAT with ONLY:
-    // Resource: this repo; Permission: Actions = Read & Write; Everything else = No access.
-    const GH_TOKEN     = "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";
-    const OWNER        = "Juzz-Layman";
-    const REPO         = "Incident-Updater";
-    const WORKFLOW_FILE= "update-thingspeak.yml"; // path under .github/workflows/
-    const BRANCH       = "main";                  // or your default branch
-    // ============================================
+    // Set today's date as max for the date input
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const maxDate = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("dateInput").setAttribute("max", maxDate);
 
-    // Set today's date as max for the date input (local time)
-    (function setMaxDateToday() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const maxDate = `${yyyy}-${mm}-${dd}`;
-      document.getElementById("dateInput").setAttribute("max", maxDate);
-    })();
-
-    // Small helper refs
-    const spinner = document.getElementById("spinner");
-    const submitBtn = document.querySelector('input[type="submit"]');
-    const statusEl = document.getElementById("status");
-
-    function setStatus(text, cls) {
-      statusEl.className = "";
-      if (cls) statusEl.classList.add(cls);
-      statusEl.textContent = text;
-    }
-
-    async function triggerWorkflow(formattedDate) {
-      const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_FILE}/dispatches`;
-      const body = {
-        ref: BRANCH,
-        inputs: {
-          date: formattedDate // must match your workflow_dispatch input name
-        }
-      };
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Accept": "application/vnd.github+json",
-          "Authorization": `Bearer ${GH_TOKEN}`,
-          "Content-Type": "application/json"
-          // Optional: "X-GitHub-Api-Version": "2022-11-28"
-        },
-        body: JSON.stringify(body)
-      });
-
-      // Successful dispatch returns 204 No Content
-      if (res.status === 204) return { ok: true };
-
-      // Pull any error text from GitHub for debugging
-      let errorText = "";
-      try { errorText = await res.text(); } catch (_) {}
-      return { ok: false, status: res.status, message: errorText || "Unknown error" };
-    }
-
-    document.getElementById("dateForm").addEventListener("submit", async function (event) {
+    // Form submission logic
+    document.getElementById("dateForm").addEventListener("submit", async function(event) {
       event.preventDefault();
 
       const rawDate = document.getElementById("dateInput").value;
       if (!rawDate) return;
 
-      // Format to dd/mm/yyyy as before
       const [yyyy, mm, dd] = rawDate.split("-");
       const formattedDate = `${dd}/${mm}/${yyyy}`;
 
-      // Basic sanity: if token is not replaced, stop early
-      if (!GH_TOKEN || GH_TOKEN.startsWith("REPLACE_WITH_")) {
-        setStatus("⚠️ Token not configured. Please update the page configuration.", "warn");
-        return;
-      }
+      const apiKey = "4USXQ409XJV9NXK9";
+      const field = "3"; // change if you're using a different field
+      const url = `https://api.thingspeak.com/update?api_key=${apiKey}&field${field}=${encodeURIComponent(formattedDate)}`;
 
-      // UI: show spinner, disable submit
-      spinner.style.display = "block";
-      submitBtn.disabled = true;
-      setStatus("Sending...", "");
+      document.getElementById("spinner").style.display = "block"; // Show spinner
+      document.querySelector('input[type="submit"]').disabled = true; // Disable submit button
 
       try {
-        const result = await triggerWorkflow(formattedDate);
-
-        spinner.style.display = "none";
-        submitBtn.disabled = false;
-
-        if (result.ok) {
-          setStatus("✅ Date sent successfully! Workflow triggered.", "ok");
-          // Mirror your original behavior: close page after 1.5s
+        const response = await fetch(url);
+        const data = await response.text();
+        document.getElementById("spinner").style.display = "none"; // Hide spinner
+        document.querySelector('input[type="submit"]').disabled = false; // Enable submit button
+        if (parseInt(data)) {
+          document.getElementById("status").textContent = "✅ Date sent successfully!";
           setTimeout(() => {
-            try {
-              window.open('', '_self', '');
-              window.close();
-            } catch (_) {
-              // In case the browser blocks close(), just ignore
-            }
-          }, 1500);
+          window.open('', '_self', ''); 
+          window.close();
+          }, 1500); // Close the page after 1.5 seconds
         } else {
-          // Friendly messages for common cases
-          if (result.status === 401 || result.status === 403) {
-            setStatus("❌ Auth failed. Check PAT is fine‑grained and has Actions: Read & Write.", "err");
-          } else if (result.status === 404) {
-            setStatus("❌ Not found. Check OWNER/REPO/WORKFLOW_FILE/BRANCH values.", "err");
-          } else {
-            setStatus("⚠️ Failed to start workflow.", "warn");
-          }
-          console.debug("Workflow dispatch error:", result);
+          document.getElementById("status").textContent = "⚠️ Failed to update board.";
         }
       } catch (error) {
-        spinner.style.display = "none";
-        submitBtn.disabled = false;
-        setStatus("❌ Error sending request.", "err");
-        console.error("Unexpected error:", error);
+        document.getElementById("spinner").style.display = "none"; // Hide spinner
+        document.querySelector('input[type="submit"]').disabled = false; // Enable submit button
+        document.getElementById("status").textContent = "❌ Error sending request.";
       }
     });
   </script>
