@@ -1,0 +1,24 @@
+
+name: Update ThingSpeak
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Formatted date to send to ThingSpeak"
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update ThingSpeak field
+        run: |
+          FIELD=${{ secrets.THINGSPEAK_FIELD }}
+          KEY=${{ secrets.THINGSPEAK_API_KEY }}
+
+          curl -X POST "https://api.thingspeak.com/update" \
+            -d "api_key=$KEY" \
+            -d "field${FIELD}=${{ github.event.inputs.date }}"
+``
